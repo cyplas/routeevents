@@ -31,6 +31,16 @@ public class MainActivity extends Activity {
 
     private static final String COUNTRY_NAME = "Slovenia";
     private static final float INITIAL_MAGNIFICATION = 8.0f;
+
+    private static final String JSON_SOURCE_URL = "http://opendata.si/promet/events/";
+    public static final String JSON_KEY_LATITUDE = "y_wgs";
+    public static final String JSON_KEY_LONGITUDE = "x_wgs";
+    public static final String JSON_KEY_CAUSE = "vzrok";
+    public static final String JSON_KEY_PRIORITY = "prioriteta";
+    public static final String JSON_KEY_DESCRIPTION = "opis";
+    public static final String JSON_KEY_EVENTS = "dogodki";
+    public static final String JSON_KEY_EVENT_ARRAY = "dogodek";
+
     private Geocoder geocoder;
     private LatLng origin;
     private LatLng destination;
@@ -114,18 +124,18 @@ public class MainActivity extends Activity {
         @Override
         protected JSONObject doInBackground(String... args) {
             JSONParser jParser = new JSONParser();
-            JSONObject json = jParser.getJSONFromUrl("http://opendata.si/promet/events/");
+            JSONObject json = jParser.getJSONFromUrl(JSON_SOURCE_URL);
             return json;
         }
         @Override
         protected void onPostExecute(JSONObject json) {
             pDialog.dismiss();
             try {
-                JSONObject dogodki = json.getJSONObject("dogodki");
-                JSONArray dogodekArray = dogodki.getJSONArray("dogodek");
-                for (int i=0; i < dogodekArray.length(); i++) {
-                    JSONObject dogodek = dogodekArray.getJSONObject(i);
-                    TrafficEvent event = parseJSONToTrafficEvent(dogodek);
+                JSONObject jsonEvents = json.getJSONObject(JSON_KEY_EVENTS);
+                JSONArray jsonEventArray = jsonEvents.getJSONArray(JSON_KEY_EVENT_ARRAY);
+                for (int i=0; i < jsonEventArray.length(); i++) {
+                    JSONObject jsonEvent = jsonEventArray.getJSONObject(i);
+                    TrafficEvent event = parseJSONToTrafficEvent(jsonEvent);
                     showEvent(event);
                 }
             } catch (JSONException e) {
@@ -135,18 +145,18 @@ public class MainActivity extends Activity {
     }
 
     private TrafficEvent parseJSONToTrafficEvent(JSONObject event) throws JSONException {
-        double latitude = event.getDouble("y_wgs");
-        double longitude = event.getDouble("x_wgs");
-        String cause = event.getString("vzrok");
-        int priority  = event.getInt("prioriteta");
-        String description = event.getString("opis");
+        double latitude = event.getDouble(JSON_KEY_LATITUDE);
+        double longitude = event.getDouble(JSON_KEY_LONGITUDE);
+        String cause = event.getString(JSON_KEY_CAUSE);
+        int priority  = event.getInt(JSON_KEY_PRIORITY);
+        String description = event.getString(JSON_KEY_DESCRIPTION);
         return new TrafficEvent(latitude,longitude,cause,priority,description);
     }
 
     private void showEvent(TrafficEvent event) {
-        LatLng dogodekLatLng = new LatLng(event.getLatitude(),event.getLongitude());
+        LatLng latLng = new LatLng(event.getLatitude(),event.getLongitude());
         map.addMarker(new MarkerOptions()
-                .position(dogodekLatLng)
+                .position(latLng)
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
                 .title(event.getCause() + " [" + event.getPriority() + "]")
                 .snippet(event.getDescription()));
