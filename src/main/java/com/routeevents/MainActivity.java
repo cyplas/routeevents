@@ -23,9 +23,8 @@ import java.util.List;
 
 public class MainActivity extends Activity {
 
-    private static final LatLng SLOVENIA_CENTRE = new LatLng(41.151241,14.995463);
-    private static final float SLOVENIA_MAGNIFICATION = 7.0f;
-    private static final String SLOVENIA_ADDRESS_SUFFIX = ", Slovenia";
+    private static final String COUNTRY_NAME = "Slovenia";
+    private static final float INITIAL_MAGNIFICATION = 8.0f;
     private Geocoder geocoder;
     private LatLng origin;
     private LatLng destination;
@@ -39,10 +38,11 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
 
-        map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(SLOVENIA_CENTRE,SLOVENIA_MAGNIFICATION));
-
         geocoder = new Geocoder(getApplicationContext());
+        map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+        LatLng initialLatLng = getLatLngFromString(COUNTRY_NAME);
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLatLng,INITIAL_MAGNIFICATION));
+
         direction = new GoogleDirection(this);
         direction.setOnDirectionResponseListener(new GoogleDirection.OnDirectionResponseListener() {
             public void onResponse(String status, Document doc, GoogleDirection dir) {
@@ -59,18 +59,15 @@ public class MainActivity extends Activity {
      }
 
     private void updatePlaces() {
-        String originString = ((EditText) findViewById(R.id.origin)).getText().toString();
-        String destinationString = ((EditText) findViewById(R.id.destination)).getText().toString();
+        String originString = ((EditText) findViewById(R.id.origin)).getText().toString() + ", " + COUNTRY_NAME;
+        String destinationString = ((EditText) findViewById(R.id.destination)).getText().toString() + ", " + COUNTRY_NAME;
         origin = getLatLngFromString(originString);
         destination = getLatLngFromString(destinationString);
-        if (origin != null && destination != null) {
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(origin, SLOVENIA_MAGNIFICATION + 2));
-        }
     }
 
     private LatLng getLatLngFromString(String string) {
         try {
-            List<Address> addresses = geocoder.getFromLocationName(string + SLOVENIA_ADDRESS_SUFFIX, 1);
+            List<Address> addresses = geocoder.getFromLocationName(string, 1);
             if (!addresses.isEmpty()) {
                 Address address = addresses.get(0);
                 return new LatLng(address.getLatitude(), address.getLongitude());
@@ -85,7 +82,9 @@ public class MainActivity extends Activity {
     public void search(View view) {
         direction.setLogging(true);
         updatePlaces();
-        direction.request(origin, destination, GoogleDirection.MODE_DRIVING);
+        if (origin != null && destination != null) {
+            direction.request(origin, destination, GoogleDirection.MODE_DRIVING);
+        }
     }
 
     public void onPause() {
