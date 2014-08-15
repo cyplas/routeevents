@@ -9,13 +9,38 @@
         android:orientation="vertical"
         >
 
-    <Button
-            android:id="@+id/button"
+    <LinearLayout
+            android:id="@+id/main_activity_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Search"
-            android:onClick="search"
-            />
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:orientation="horizontal"
+            >
+
+        <EditText
+                android:id="@+id/origin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Origin"
+                />
+
+        <EditText
+                android:id="@+id/destination"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Destination"
+                />
+
+        <Button
+                android:id="@+id/button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Search"
+                android:onClick="search"
+                />
+
+    </LinearLayout>
 
     <fragment
             android:id="@+id/map"

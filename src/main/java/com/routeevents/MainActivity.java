@@ -7,6 +7,7 @@ import android.location.Geocoder;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -58,8 +59,8 @@ public class MainActivity extends Activity {
     }
 
     public void search(View view) {
-        String originString = "Ljubljana";
-        String destinationString = "Maribor";
+        String originString = ((EditText) findViewById(R.id.origin)).getText().toString();
+        String destinationString = ((EditText) findViewById(R.id.destination)).getText().toString();
         updatePlaces(originString,destinationString);
     }
 
