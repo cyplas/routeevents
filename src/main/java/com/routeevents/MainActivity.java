@@ -37,11 +37,7 @@ public class MainActivity extends Activity {
     private GoogleMap map;
     private GoogleDirection direction;
 
-    private double eventLat;
-    private double eventLng;
-    private String eventCause;
-    private int eventPriority;
-    private String eventDescription;
+    private TrafficEvent event;
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
@@ -128,22 +124,27 @@ public class MainActivity extends Activity {
                 JSONObject dogodki = json.getJSONObject("dogodki");
                 JSONArray dogodekArray = dogodki.getJSONArray("dogodek");
                 JSONObject dogodek = dogodekArray.getJSONObject(0);
-                eventLat = dogodek.getDouble("y_wgs");
-                eventLng = dogodek.getDouble("x_wgs");
-                eventCause = dogodek.getString("vzrok");
-                eventPriority = dogodek.getInt("prioriteta");
-                eventDescription = dogodek.getString("opis");
-                LatLng dogodekLatLng = new LatLng(eventLat,eventLng);
-                map.addMarker(new MarkerOptions()
-                        .position(dogodekLatLng)
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
-                        .title(eventCause + " [" + eventPriority + "]")
-                        .snippet(eventDescription));
-                System.out.println("Route Events: " + eventLat + "/" + eventLng + "/" + eventDescription);
+                double latitude = dogodek.getDouble("y_wgs");
+                double longitude = dogodek.getDouble("x_wgs");
+                String cause = dogodek.getString("vzrok");
+                int priority  = dogodek.getInt("prioriteta");
+                String description = dogodek.getString("opis");
+                event = new TrafficEvent(latitude,longitude,cause,priority,description);
+                showEvent(event);
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void showEvent(TrafficEvent event) {
+        LatLng dogodekLatLng = new LatLng(event.getLatitude(),event.getLongitude());
+        map.addMarker(new MarkerOptions()
+                .position(dogodekLatLng)
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                .title(event.getCause() + " [" + event.getPriority() + "]")
+                .snippet(event.getDescription()));
     }
 
 }
