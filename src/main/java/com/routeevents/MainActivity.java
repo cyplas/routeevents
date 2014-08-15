@@ -15,9 +15,7 @@ import app.akexorcist.gdaplibrary.GoogleDirection;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.*;
 import learn2crack.asynctask.library.JSONParser;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,6 +23,7 @@ import org.json.JSONObject;
 import org.w3c.dom.Document;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends Activity {
@@ -40,14 +39,17 @@ public class MainActivity extends Activity {
     private static final String JSON_KEY_DESCRIPTION = "opis";
     private static final String JSON_KEY_EVENTS = "dogodki";
     private static final String JSON_KEY_EVENT_ARRAY = "dogodek";
+    public static final double DISTANCE_THRESHOLD = 0.02;
 
     private Geocoder geocoder;
     private LatLng origin;
     private LatLng destination;
     private GoogleMap map;
     private GoogleDirection direction;
+    private DistanceCalculator distanceCalculator = new DistanceCalculator();
 
-    private TrafficEvent event;
+    private List<TrafficEvent> events = new ArrayList<TrafficEvent>();
+    private List<Marker> eventMarkers = new ArrayList<Marker>();
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
@@ -69,10 +71,28 @@ public class MainActivity extends Activity {
                 map.addMarker(new MarkerOptions().position(origin)
                         .icon(BitmapDescriptorFactory.defaultMarker(
                                 BitmapDescriptorFactory.HUE_GREEN)));
-
                 map.addMarker(new MarkerOptions().position(destination)
                         .icon(BitmapDescriptorFactory.defaultMarker(
                                 BitmapDescriptorFactory.HUE_BLUE)));
+                for (Marker marker : eventMarkers) {
+                    marker.remove();
+                }
+                List<LatLng> latLngs = dir.getDirection(doc);
+                System.out.println("Route Events: direction marker count=" + latLngs.size() + "/" + "events=" + events.size());
+                int count = 0;
+                for (TrafficEvent event : events) {
+                    LatLng p = new LatLng(event.getLatitude(),event.getLongitude());
+                    for (int i=0; i<latLngs.size()-1;i++) {
+                        LatLng v = latLngs.get(i);
+                        LatLng w = latLngs.get(i+1);
+                        count++;
+                        double distance = distanceCalculator.calculateDistanceFromPointToSegment(v, w, p);
+                        if (distance < DISTANCE_THRESHOLD) {
+                            showEvent(event);
+                            break;
+                        }
+                    }
+                }
             }
         });
      }
@@ -133,9 +153,11 @@ public class MainActivity extends Activity {
             try {
                 JSONObject jsonEvents = json.getJSONObject(JSON_KEY_EVENTS);
                 JSONArray jsonEventArray = jsonEvents.getJSONArray(JSON_KEY_EVENT_ARRAY);
+                events = new ArrayList<TrafficEvent>();
                 for (int i=0; i < jsonEventArray.length(); i++) {
                     JSONObject jsonEvent = jsonEventArray.getJSONObject(i);
                     TrafficEvent event = parseJSONToTrafficEvent(jsonEvent);
+                    events.add(event);
                     showEvent(event);
                 }
             } catch (JSONException e) {
@@ -155,11 +177,13 @@ public class MainActivity extends Activity {
 
     private void showEvent(TrafficEvent event) {
         LatLng latLng = new LatLng(event.getLatitude(),event.getLongitude());
-        map.addMarker(new MarkerOptions()
+        MarkerOptions markerOptions = new MarkerOptions()
                 .position(latLng)
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
                 .title(event.getCause() + " [PRIORITY=" + event.getPriority() + "]")
-                .snippet(event.getDescription()));
+                .snippet(event.getDescription());
+        Marker marker = map.addMarker(markerOptions);
+        eventMarkers.add(marker);
     }
 
 }
