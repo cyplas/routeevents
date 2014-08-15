@@ -19,6 +19,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import learn2crack.asynctask.library.JSONParser;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
@@ -36,6 +37,10 @@ public class MainActivity extends Activity {
     private GoogleMap map;
     private GoogleDirection direction;
 
+    private double eventLat;
+    private double eventLng;
+    private String eventDescription;
+
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,11 +52,12 @@ public class MainActivity extends Activity {
         map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
         LatLng initialLatLng = getLatLngFromString(COUNTRY_NAME);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLatLng,INITIAL_MAGNIFICATION));
+        new JSONParse().execute();
 
         direction = new GoogleDirection(this);
         direction.setOnDirectionResponseListener(new GoogleDirection.OnDirectionResponseListener() {
             public void onResponse(String status, Document doc, GoogleDirection dir) {
-                map.addPolyline(dir.getPolyline(doc, 3, Color.RED));
+                map.addPolyline(dir.getPolyline(doc, 3, Color.YELLOW));
                 map.addMarker(new MarkerOptions().position(origin)
                         .icon(BitmapDescriptorFactory.defaultMarker(
                                 BitmapDescriptorFactory.HUE_GREEN)));
@@ -101,9 +107,6 @@ public class MainActivity extends Activity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            uid = (TextView)findViewById(R.id.uid);
-            name1 = (TextView)findViewById(R.id.name);
-            email1 = (TextView)findViewById(R.id.email);
             pDialog = new ProgressDialog(MainActivity.this);
             pDialog.setMessage("Getting Data ...");
             pDialog.setIndeterminate(false);
@@ -113,28 +116,30 @@ public class MainActivity extends Activity {
         @Override
         protected JSONObject doInBackground(String... args) {
             JSONParser jParser = new JSONParser();
-            // Getting JSON from URL
-            JSONObject json = jParser.getJSONFromUrl(url);
+            JSONObject json = jParser.getJSONFromUrl("http://opendata.si/promet/events/");
             return json;
         }
         @Override
         protected void onPostExecute(JSONObject json) {
             pDialog.dismiss();
             try {
-                // Getting JSON Array
-                user = json.getJSONArray(TAG_USER);
-                JSONObject c = user.getJSONObject(0);
-                // Storing  JSON item in a Variable
-                String id = c.getString(TAG_ID);
-                String name = c.getString(TAG_NAME);
-                String email = c.getString(TAG_EMAIL);
-                //Set JSON Data in TextView
-                uid.setText(id);
-                name1.setText(name);
-                email1.setText(email);
+                JSONObject dogodki = json.getJSONObject("dogodki");
+                JSONArray dogodekArray = dogodki.getJSONArray("dogodek");
+                JSONObject dogodek = dogodekArray.getJSONObject(0);
+                eventLat = dogodek.getDouble("y_wgs");
+                eventLng = dogodek.getDouble("x_wgs");
+                eventDescription = dogodek.getString("opis");
+                LatLng dogodekLatLng = new LatLng(eventLat,eventLng);
+                map.addMarker(new MarkerOptions()
+                        .position(dogodekLatLng)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                        .title("Event")
+                        .snippet(eventDescription));
+                System.out.println("Route Events: " + eventLat + "/" + eventLng + "/" + eventDescription);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-
     }
+
+}
