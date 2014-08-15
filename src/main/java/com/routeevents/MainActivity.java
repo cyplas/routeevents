@@ -4,16 +4,15 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MainActivity extends Activity {
 
-    static final LatLng HAMBURG = new LatLng(53.558, 9.927);
-    static final LatLng KIEL = new LatLng(53.551, 9.993);
+    private static final LatLng SLOVENIA_CENTRE = new LatLng(46.151241,14.995463);
+    private static final float SLOVENIA_MAGNIFICATION = 7.0f;
     private GoogleMap map;
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -21,17 +20,8 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
-        map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
-                .getMap();
-
-        if (map != null) {
-            Marker hamburg = map.addMarker(new MarkerOptions().position(HAMBURG)
-                    .title("Hamburg"));
-            Marker kiel = map.addMarker(new MarkerOptions()
-                    .position(KIEL)
-                    .title("Kiel")
-                    .snippet("Kiel is cool"));
-        }
+        map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(SLOVENIA_CENTRE,SLOVENIA_MAGNIFICATION));
     }
 
 }
