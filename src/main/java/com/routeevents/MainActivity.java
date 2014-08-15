@@ -6,6 +6,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -32,12 +33,13 @@ public class MainActivity extends Activity {
         setContentView(R.layout.main_activity);
         map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(SLOVENIA_CENTRE,SLOVENIA_MAGNIFICATION));
-        String originString = "Ljubljana";
-        String destinationString = "Maribor";
+     }
+
+    private void updatePlaces(String originString, String destinationString) {
         origin = getLatLngFromString(originString);
         destination = getLatLngFromString(destinationString);
         if (origin != null && destination != null) {
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(origin,SLOVENIA_MAGNIFICATION+2));
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(origin, SLOVENIA_MAGNIFICATION + 2));
         }
     }
 
@@ -53,6 +55,12 @@ public class MainActivity extends Activity {
         }
         System.out.println("Route Events: couldn't find LatLng for string=" + string);
         return null;
+    }
+
+    public void search(View view) {
+        String originString = "Ljubljana";
+        String destinationString = "Maribor";
+        updatePlaces(originString,destinationString);
     }
 
 }
