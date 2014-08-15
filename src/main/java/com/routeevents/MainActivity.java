@@ -123,19 +123,24 @@ public class MainActivity extends Activity {
             try {
                 JSONObject dogodki = json.getJSONObject("dogodki");
                 JSONArray dogodekArray = dogodki.getJSONArray("dogodek");
-                JSONObject dogodek = dogodekArray.getJSONObject(0);
-                double latitude = dogodek.getDouble("y_wgs");
-                double longitude = dogodek.getDouble("x_wgs");
-                String cause = dogodek.getString("vzrok");
-                int priority  = dogodek.getInt("prioriteta");
-                String description = dogodek.getString("opis");
-                event = new TrafficEvent(latitude,longitude,cause,priority,description);
-                showEvent(event);
-
+                for (int i=0; i < dogodekArray.length(); i++) {
+                    JSONObject dogodek = dogodekArray.getJSONObject(i);
+                    TrafficEvent event = parseJSONToTrafficEvent(dogodek);
+                    showEvent(event);
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private TrafficEvent parseJSONToTrafficEvent(JSONObject event) throws JSONException {
+        double latitude = event.getDouble("y_wgs");
+        double longitude = event.getDouble("x_wgs");
+        String cause = event.getString("vzrok");
+        int priority  = event.getInt("prioriteta");
+        String description = event.getString("opis");
+        return new TrafficEvent(latitude,longitude,cause,priority,description);
     }
 
     private void showEvent(TrafficEvent event) {
