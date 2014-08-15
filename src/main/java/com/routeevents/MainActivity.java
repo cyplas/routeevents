@@ -33,13 +33,13 @@ public class MainActivity extends Activity {
     private static final float INITIAL_MAGNIFICATION = 8.0f;
 
     private static final String JSON_SOURCE_URL = "http://opendata.si/promet/events/";
-    public static final String JSON_KEY_LATITUDE = "y_wgs";
-    public static final String JSON_KEY_LONGITUDE = "x_wgs";
-    public static final String JSON_KEY_CAUSE = "vzrok";
-    public static final String JSON_KEY_PRIORITY = "prioriteta";
-    public static final String JSON_KEY_DESCRIPTION = "opis";
-    public static final String JSON_KEY_EVENTS = "dogodki";
-    public static final String JSON_KEY_EVENT_ARRAY = "dogodek";
+    private static final String JSON_KEY_LATITUDE = "y_wgs";
+    private static final String JSON_KEY_LONGITUDE = "x_wgs";
+    private static final String JSON_KEY_CAUSE = "vzrok";
+    private static final String JSON_KEY_PRIORITY = "prioriteta";
+    private static final String JSON_KEY_DESCRIPTION = "opis";
+    private static final String JSON_KEY_EVENTS = "dogodki";
+    private static final String JSON_KEY_EVENT_ARRAY = "dogodek";
 
     private Geocoder geocoder;
     private LatLng origin;
