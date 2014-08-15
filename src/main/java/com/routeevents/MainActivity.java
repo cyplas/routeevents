@@ -39,6 +39,8 @@ public class MainActivity extends Activity {
 
     private double eventLat;
     private double eventLng;
+    private String eventCause;
+    private int eventPriority;
     private String eventDescription;
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -128,12 +130,14 @@ public class MainActivity extends Activity {
                 JSONObject dogodek = dogodekArray.getJSONObject(0);
                 eventLat = dogodek.getDouble("y_wgs");
                 eventLng = dogodek.getDouble("x_wgs");
+                eventCause = dogodek.getString("vzrok");
+                eventPriority = dogodek.getInt("prioriteta");
                 eventDescription = dogodek.getString("opis");
                 LatLng dogodekLatLng = new LatLng(eventLat,eventLng);
                 map.addMarker(new MarkerOptions()
                         .position(dogodekLatLng)
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
-                        .title("Event")
+                        .title(eventCause + " [" + eventPriority + "]")
                         .snippet(eventDescription));
                 System.out.println("Route Events: " + eventLat + "/" + eventLng + "/" + eventDescription);
             } catch (JSONException e) {
