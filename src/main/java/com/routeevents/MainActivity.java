@@ -158,7 +158,7 @@ public class MainActivity extends Activity {
         map.addMarker(new MarkerOptions()
                 .position(latLng)
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
-                .title(event.getCause() + " [" + event.getPriority() + "]")
+                .title(event.getCause() + " [PRIORITY=" + event.getPriority() + "]")
                 .snippet(event.getDescription()));
     }
 
