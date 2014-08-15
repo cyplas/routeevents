@@ -10,7 +10,7 @@
         >
 
     <LinearLayout
-            android:id="@+id/main_activity_id"
+            android:id="@+id/fields"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="16dp"
