@@ -5,7 +5,7 @@
     <item
             android:id="@+id/menu_toggle_events"
             android:orderInCategory="1"
-            android:showAsAction="ifRoom"
+            android:showAsAction="always"
             android:title="@string/menuitem_events_route"
             android:visible="false"
             />
@@ -13,7 +13,7 @@
     <item
             android:id="@+id/menu_toggle_view"
             android:orderInCategory="2"
-            android:showAsAction="ifRoom"
+            android:showAsAction="always"
             android:title="@string/menuitem_view_table"
             android:visible="false"
             />
@@ -21,7 +21,7 @@
     <item
             android:id="@+id/menu_settings"
             android:orderInCategory="100"
-            android:showAsAction="never"
+            android:showAsAction="ifRoom"
             android:title="@string/menuitem_settings"
             android:visible="true"
             />
