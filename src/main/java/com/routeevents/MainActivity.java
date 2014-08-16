@@ -10,10 +10,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TableLayout;
-import android.widget.TextView;
+import android.widget.*;
 import app.akexorcist.gdaplibrary.GoogleDirection;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -84,6 +81,8 @@ public class MainActivity extends Activity {
                     View headerView = getLayoutInflater().inflate(R.layout.event_header,null);
                     eventTable.addView(headerView);
                 }
+                Button toggleButton = (Button) findViewById(R.id.button_toggle);
+                toggleButton.setVisibility(View.VISIBLE);
                 routeLine = map.addPolyline(dir.getPolyline(doc, 3, Color.YELLOW));
                 routeOrigin = map.addMarker(new MarkerOptions().position(origin)
                         .icon(BitmapDescriptorFactory.defaultMarker(
@@ -158,12 +157,15 @@ public class MainActivity extends Activity {
     public void toggleViews(View view) {
         TableLayout eventTable = (TableLayout) findViewById(R.id.table);
         LinearLayout mapContainer = (LinearLayout) findViewById(R.id.map_container);
+        Button toggleButton = (Button) findViewById(R.id.button_toggle);
         if (eventTable.getVisibility() == View.VISIBLE) {
             eventTable.setVisibility(View.GONE);
             mapContainer.setVisibility(View.VISIBLE);
+            toggleButton.setText("Table");
         } else {
             eventTable.setVisibility(View.VISIBLE);
             mapContainer.setVisibility(View.GONE);
+            toggleButton.setText("Map");
         }
     }
 

@@ -44,8 +44,9 @@
                 android:id="@+id/button_toggle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Toggle"
+                android:text="Table"
                 android:onClick="toggleViews"
+                android:visibility="gone"
                 />
 
     </LinearLayout>
