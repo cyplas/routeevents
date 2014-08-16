@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import app.akexorcist.gdaplibrary.GoogleDirection;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -93,6 +94,13 @@ public class MainActivity extends Activity {
                 for (Marker marker : eventMarkers) {
                     marker.remove();
                 }
+                eventMarkers.clear();
+                LatLngBounds.Builder b = new LatLngBounds.Builder();
+                b.include(routeOrigin.getPosition());
+                b.include(routeDestination.getPosition());
+                LatLngBounds bounds = b.build();
+                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds,50);
+                map.animateCamera(cu);
                 List<LatLng> latLngs = dir.getDirection(doc);
                 LimitingRectangle rectangle = new LimitingRectangle(latLngs);
                 System.out.println("Route Events: direction marker count=" + latLngs.size() + "/" + "events=" + events.size());
