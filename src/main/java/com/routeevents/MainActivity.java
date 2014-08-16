@@ -87,18 +87,21 @@ public class MainActivity extends Activity {
                     marker.remove();
                 }
                 List<LatLng> latLngs = dir.getDirection(doc);
+                LimitingRectangle rectangle = new LimitingRectangle(latLngs);
                 System.out.println("Route Events: direction marker count=" + latLngs.size() + "/" + "events=" + events.size());
                 int count = 0;
                 for (TrafficEvent event : events) {
-                    LatLng p = new LatLng(event.getLatitude(),event.getLongitude());
-                    for (int i=0; i<latLngs.size()-1;i++) {
-                        LatLng v = latLngs.get(i);
-                        LatLng w = latLngs.get(i+1);
-                        count++;
-                        double distance = distanceCalculator.calculateDistanceFromPointToSegment(v, w, p);
-                        if (distance < DISTANCE_THRESHOLD) {
-                            showEvent(event);
-                            break;
+                    if (rectangle.containsEvent(event)) {
+                        LatLng p = new LatLng(event.getLatitude(), event.getLongitude());
+                        for (int i = 0; i < latLngs.size() - 1; i++) {
+                            LatLng v = latLngs.get(i);
+                            LatLng w = latLngs.get(i + 1);
+                            count++;
+                            double distance = distanceCalculator.calculateDistanceFromPointToSegment(v, w, p);
+                            if (distance < DISTANCE_THRESHOLD) {
+                                showEvent(event);
+                                break;
+                            }
                         }
                     }
                 }
@@ -193,6 +196,43 @@ public class MainActivity extends Activity {
                 .snippet(event.getDescription());
         Marker marker = map.addMarker(markerOptions);
         eventMarkers.add(marker);
+    }
+
+    public static class LimitingRectangle {
+
+        public Double minLat;
+        public Double maxLat;
+        public Double minLng;
+        public Double maxLng;
+
+        public LimitingRectangle(List<LatLng> latLngs) {
+            minLat = maxLat = minLng = maxLng = null;
+            for (LatLng latLng : latLngs) {
+                double lat = latLng.latitude;
+                double lng = latLng.longitude;
+                if (minLat == null) {
+                    minLat = maxLat = lat;
+                    minLng = maxLng = lng;
+                } else {
+                    minLat = lat < minLat ? lat : minLat;
+                    maxLat = lat > maxLat ? lat : maxLat;
+                    minLng = lng < minLng ? lng : minLng;
+                    maxLng = lng > maxLng ? lng : maxLng;
+                }
+            }
+            minLat -= DISTANCE_THRESHOLD;
+            maxLat += DISTANCE_THRESHOLD;
+            minLng -= DISTANCE_THRESHOLD;
+            maxLng += DISTANCE_THRESHOLD;
+        }
+
+        public boolean containsEvent(TrafficEvent event) {
+            return (event.getLatitude() > minLat
+                    && event.getLatitude() < maxLat
+                    && event.getLongitude() > minLng
+                    && event.getLongitude() < maxLng);
+        }
+
     }
 
 }
