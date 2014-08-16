@@ -51,6 +51,10 @@ public class MainActivity extends Activity {
     private List<TrafficEvent> events = new ArrayList<TrafficEvent>();
     private List<Marker> eventMarkers = new ArrayList<Marker>();
 
+    private Polyline routeLine;
+    private Marker routeOrigin;
+    private Marker routeDestination;
+
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,11 +71,16 @@ public class MainActivity extends Activity {
         direction = new GoogleDirection(this);
         direction.setOnDirectionResponseListener(new GoogleDirection.OnDirectionResponseListener() {
             public void onResponse(String status, Document doc, GoogleDirection dir) {
-                map.addPolyline(dir.getPolyline(doc, 3, Color.YELLOW));
-                map.addMarker(new MarkerOptions().position(origin)
+                if (routeLine != null) {
+                    routeLine.remove();
+                    routeOrigin.remove();
+                    routeDestination.remove();
+                }
+                routeLine = map.addPolyline(dir.getPolyline(doc, 3, Color.YELLOW));
+                routeOrigin = map.addMarker(new MarkerOptions().position(origin)
                         .icon(BitmapDescriptorFactory.defaultMarker(
                                 BitmapDescriptorFactory.HUE_GREEN)));
-                map.addMarker(new MarkerOptions().position(destination)
+                routeDestination = map.addMarker(new MarkerOptions().position(destination)
                         .icon(BitmapDescriptorFactory.defaultMarker(
                                 BitmapDescriptorFactory.HUE_BLUE)));
                 for (Marker marker : eventMarkers) {
