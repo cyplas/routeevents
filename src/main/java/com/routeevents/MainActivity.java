@@ -25,7 +25,9 @@ import org.w3c.dom.Document;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends Activity {
 
@@ -51,8 +53,9 @@ public class MainActivity extends Activity {
     private GoogleDirection direction;
     private DistanceCalculator distanceCalculator = new DistanceCalculator();
 
-    private List<TrafficEvent> events = new ArrayList<TrafficEvent>();
+    private Map<TrafficEvent,Boolean> eventMap = new HashMap<TrafficEvent,Boolean>();
     private List<Marker> eventMarkers = new ArrayList<Marker>();
+    private boolean showAllEvents = true;
 
     private Polyline routeLine;
     private Marker routeOrigin;
@@ -62,7 +65,8 @@ public class MainActivity extends Activity {
     private EditText destinationEditText;
     private LinearLayout mapContainer;
     private TableLayout eventTable;
-    private Button toggleButton;
+    private Button toggleViewButton;
+    private Button toggleAllButton;
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
@@ -75,7 +79,8 @@ public class MainActivity extends Activity {
         destinationEditText = (EditText) findViewById(R.id.destination);
         eventTable = (TableLayout) findViewById(R.id.table);
         mapContainer = (LinearLayout) findViewById(R.id.map_container);
-        toggleButton = (Button) findViewById(R.id.button_toggle);
+        toggleViewButton = (Button) findViewById(R.id.button_toggle_views);
+        toggleAllButton = (Button) findViewById(R.id.button_toggle_all);
         map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
 
         geocoder = new Geocoder(getApplicationContext());
@@ -84,7 +89,7 @@ public class MainActivity extends Activity {
         map.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
             @Override
             public void onMapLoaded() {
-                resetMapBounds(INITIAL_NORTH_EAST_CORNER,INITIAL_SOUTH_WEST_CORNER);
+                resetMapBounds(INITIAL_NORTH_EAST_CORNER, INITIAL_SOUTH_WEST_CORNER);
             }
         });
 
@@ -97,20 +102,19 @@ public class MainActivity extends Activity {
                 flushEvents();
                 processDirections(dir.getPolyline(doc,3,Color.YELLOW));
                 processEvents(dir.getDirection(doc));
+                showEvents();
             }
         });
      }
 
     private void flushDirections() {
         if (routeLine == null) {
-            toggleButton.setVisibility(View.VISIBLE);
+            toggleViewButton.setVisibility(View.VISIBLE);
+            toggleAllButton.setVisibility(View.VISIBLE);
         } else {
             routeLine.remove();
             routeOrigin.remove();
             routeDestination.remove();
-            eventTable.removeAllViews();
-            View headerView = getLayoutInflater().inflate(R.layout.event_header,null);
-            eventTable.addView(headerView);
         }
     }
 
@@ -119,6 +123,28 @@ public class MainActivity extends Activity {
             marker.remove();
         }
         eventMarkers.clear();
+        eventTable.removeAllViews();
+        View headerView = getLayoutInflater().inflate(R.layout.event_header,null);
+        eventTable.addView(headerView);
+    }
+
+    private void showEvents() {
+        for (Map.Entry<TrafficEvent,Boolean> entry : eventMap.entrySet()) {
+            if (showAllEvents || entry.getValue()) {
+                showEvent(entry.getKey(),entry.getValue());
+            }
+        }
+    }
+
+    public void toggleAllEvents(View view) {
+        flushEvents();
+        showAllEvents = !showAllEvents;
+        showEvents();
+        if (showAllEvents) {
+            toggleAllButton.setText("Route Events");
+        } else {
+            toggleAllButton.setText("All Events");
+        }
     }
 
     private void processDirections(PolylineOptions polylineOptions) {
@@ -144,7 +170,7 @@ public class MainActivity extends Activity {
 
     private void processEvents(List<LatLng> latLngs) {
         LimitingRectangle rectangle = new LimitingRectangle(latLngs);
-        for (TrafficEvent event : events) {
+        for (TrafficEvent event : eventMap.keySet()) {
             boolean onRoute = false;
             if (rectangle.containsEvent(event)) {
                 LatLng p = new LatLng(event.getLatitude(), event.getLongitude());
@@ -158,13 +184,17 @@ public class MainActivity extends Activity {
                     }
                 }
             }
-            showEvent(event,onRoute);
+            eventMap.put(event, onRoute);
         }
     }
 
     private void updatePlaces() {
         String originString = originEditText.getText().toString() + ", " + COUNTRY_NAME;
         String destinationString = destinationEditText.getText().toString() + ", " + COUNTRY_NAME;
+        updatePlaces(originString,destinationString);
+    }
+
+    private void updatePlaces(String originString, String destinationString) {
         origin = getLatLngFromString(originString);
         destination = getLatLngFromString(destinationString);
     }
@@ -195,11 +225,13 @@ public class MainActivity extends Activity {
         if (eventTable.getVisibility() == View.VISIBLE) {
             eventTable.setVisibility(View.GONE);
             mapContainer.setVisibility(View.VISIBLE);
-            toggleButton.setText("Table");
+            toggleViewButton.setText("Table");
+            toggleAllButton.setVisibility(View.VISIBLE);
         } else {
             eventTable.setVisibility(View.VISIBLE);
             mapContainer.setVisibility(View.GONE);
-            toggleButton.setText("Map");
+            toggleViewButton.setText("Map");
+            toggleAllButton.setVisibility(View.GONE);
         }
     }
 
@@ -230,11 +262,11 @@ public class MainActivity extends Activity {
             try {
                 JSONObject jsonEvents = json.getJSONObject(JSON_KEY_EVENTS);
                 JSONArray jsonEventArray = jsonEvents.getJSONArray(JSON_KEY_EVENT_ARRAY);
-                events = new ArrayList<TrafficEvent>();
+                eventMap = new HashMap<TrafficEvent,Boolean>();
                 for (int i=0; i < jsonEventArray.length(); i++) {
                     JSONObject jsonEvent = jsonEventArray.getJSONObject(i);
                     TrafficEvent event = parseJSONToTrafficEvent(jsonEvent);
-                    events.add(event);
+                    eventMap.put(event, false);
                     showEvent(event,false);
                 }
             } catch (JSONException e) {

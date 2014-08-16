@@ -41,11 +41,20 @@
                 />
 
         <Button
-                android:id="@+id/button_toggle"
+                android:id="@+id/button_toggle_views"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Table"
                 android:onClick="toggleViews"
+                android:visibility="gone"
+                />
+
+        <Button
+                android:id="@+id/button_toggle_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Route Events"
+                android:onClick="toggleAllEvents"
                 android:visibility="gone"
                 />
 
