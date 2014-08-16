@@ -9,11 +9,12 @@
     <string name="hint_origin">Začetek</string>
     <string name="hint_destination">Cilj</string>
 
-    <string name="button_events_all">Vse</string>
-    <string name="button_events_route">Na poti</string>
-    <string name="button_map">Zemljevid</string>
-    <string name="button_table">Seznam</string>
     <string name="button_search">Poišči</string>
+
+    <string name="menuitem_events_all">Vse</string>
+    <string name="menuitem_events_route">Na poti</string>
+    <string name="menuitem_view_map">Zemljevid</string>
+    <string name="menuitem_view_table">Seznam</string>
 
     <string name="header_cause">VRSTA</string>
     <string name="header_priority">PRI</string>

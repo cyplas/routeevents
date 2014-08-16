@@ -10,6 +10,8 @@ import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import app.akexorcist.gdaplibrary.GoogleDirection;
@@ -68,8 +70,9 @@ public class MainActivity extends Activity {
     private EditText destinationEditText;
     private LinearLayout mapContainer;
     private TableLayout eventTable;
-    private Button toggleViewButton;
-    private Button toggleAllButton;
+
+    private MenuItem viewMenuItem;
+    private MenuItem eventsMenuItem;
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
@@ -83,8 +86,6 @@ public class MainActivity extends Activity {
         destinationEditText = (EditText) findViewById(R.id.destination);
         eventTable = (TableLayout) findViewById(R.id.table);
         mapContainer = (LinearLayout) findViewById(R.id.map_container);
-        toggleViewButton = (Button) findViewById(R.id.button_toggle_views);
-        toggleAllButton = (Button) findViewById(R.id.button_toggle_all);
         map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
 
         geocoder = new Geocoder(getApplicationContext());
@@ -111,10 +112,32 @@ public class MainActivity extends Activity {
         });
      }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        viewMenuItem = menu.findItem(R.id.menu_toggle_view);
+        eventsMenuItem = menu.findItem(R.id.menu_toggle_events);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_toggle_view:
+                toggleViews();
+                return true;
+            case R.id.menu_toggle_events:
+                toggleEvents();
+                return true;
+            default:
+                return false;
+        }
+    }
+
     private void flushDirections() {
         if (routeLine == null) {
-            toggleViewButton.setVisibility(View.VISIBLE);
-            toggleAllButton.setVisibility(View.VISIBLE);
+            viewMenuItem.setVisible(true);
+            eventsMenuItem.setVisible(true);
         } else {
             routeLine.remove();
             routeOrigin.remove();
@@ -140,14 +163,14 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void toggleAllEvents(View view) {
+    public void toggleEvents() {
         flushEvents();
         showAllEvents = !showAllEvents;
         showEvents();
         if (showAllEvents) {
-            toggleAllButton.setText(resources.getString(R.string.button_events_all));
+            eventsMenuItem.setTitle(resources.getString(R.string.menuitem_events_route));
         } else {
-            toggleAllButton.setText(resources.getString(R.string.button_events_route));
+            eventsMenuItem.setTitle(resources.getString(R.string.menuitem_events_all));
         }
     }
 
@@ -225,17 +248,17 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void toggleViews(View view) {
+    public void toggleViews() {
         if (eventTable.getVisibility() == View.VISIBLE) {
             eventTable.setVisibility(View.GONE);
             mapContainer.setVisibility(View.VISIBLE);
-            toggleViewButton.setText(resources.getString(R.string.button_table));
-            toggleAllButton.setVisibility(View.VISIBLE);
+            viewMenuItem.setTitle(R.string.menuitem_view_table);
+            eventsMenuItem.setVisible(true);
         } else {
             eventTable.setVisibility(View.VISIBLE);
             mapContainer.setVisibility(View.GONE);
-            toggleViewButton.setText(resources.getString(R.string.button_map));
-            toggleAllButton.setVisibility(View.GONE);
+            viewMenuItem.setTitle(R.string.menuitem_view_map);
+            eventsMenuItem.setVisible(false);
         }
     }
 

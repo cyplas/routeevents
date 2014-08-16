@@ -40,24 +40,6 @@
                 android:onClick="search"
                 />
 
-        <Button
-                android:id="@+id/button_toggle_views"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/button_table"
-                android:onClick="toggleViews"
-                android:visibility="gone"
-                />
-
-        <Button
-                android:id="@+id/button_toggle_all"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/button_events_route"
-                android:onClick="toggleAllEvents"
-                android:visibility="gone"
-                />
-
     </LinearLayout>
 
     <LinearLayout

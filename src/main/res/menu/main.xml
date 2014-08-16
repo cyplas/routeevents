@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+            android:id="@+id/menu_toggle_events"
+            android:orderInCategory="1"
+            android:showAsAction="ifRoom"
+            android:title="@string/menuitem_events_route"
+            android:visible="false"
+            />
+
+    <item
+            android:id="@+id/menu_toggle_view"
+            android:orderInCategory="2"
+            android:showAsAction="ifRoom"
+            android:title="@string/menuitem_view_table"
+            android:visible="false"
+            />
+
+</menu>
