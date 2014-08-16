@@ -1,0 +1,9 @@
+This Android application shows current traffic events in Slovenia on a
+map. Users input start and end places in Slovenia and the app uses
+Google Directions, Google Maps and a traffic web service to show the
+user events along their specified routes in either map or list
+format. 
+
+Install with Gradle, by typing "gradle build" from the command
+line. Then the (debug version of the) Android app is generated in
+build/apk/routeevents-debug-unaligned.apk.
