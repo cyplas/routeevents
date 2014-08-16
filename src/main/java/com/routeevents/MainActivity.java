@@ -3,6 +3,7 @@ package com.routeevents;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
@@ -46,6 +47,8 @@ public class MainActivity extends Activity {
     private static final String JSON_KEY_EVENT_ARRAY = "dogodek";
     public static final double DISTANCE_THRESHOLD = 0.02;
 
+    private Resources resources;
+
     private Geocoder geocoder;
     private LatLng origin;
     private LatLng destination;
@@ -74,6 +77,7 @@ public class MainActivity extends Activity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
+        resources = getResources();
 
         originEditText = (EditText) findViewById(R.id.origin);
         destinationEditText = (EditText) findViewById(R.id.destination);
@@ -141,9 +145,9 @@ public class MainActivity extends Activity {
         showAllEvents = !showAllEvents;
         showEvents();
         if (showAllEvents) {
-            toggleAllButton.setText("Route Events");
+            toggleAllButton.setText(resources.getString(R.string.button_events_all));
         } else {
-            toggleAllButton.setText("All Events");
+            toggleAllButton.setText(resources.getString(R.string.button_events_route));
         }
     }
 
@@ -225,12 +229,12 @@ public class MainActivity extends Activity {
         if (eventTable.getVisibility() == View.VISIBLE) {
             eventTable.setVisibility(View.GONE);
             mapContainer.setVisibility(View.VISIBLE);
-            toggleViewButton.setText("Table");
+            toggleViewButton.setText(resources.getString(R.string.button_table));
             toggleAllButton.setVisibility(View.VISIBLE);
         } else {
             eventTable.setVisibility(View.VISIBLE);
             mapContainer.setVisibility(View.GONE);
-            toggleViewButton.setText("Map");
+            toggleViewButton.setText(resources.getString(R.string.button_map));
             toggleAllButton.setVisibility(View.GONE);
         }
     }
@@ -245,7 +249,7 @@ public class MainActivity extends Activity {
         protected void onPreExecute() {
             super.onPreExecute();
             pDialog = new ProgressDialog(MainActivity.this);
-            pDialog.setMessage("Getting Data ...");
+            pDialog.setMessage(resources.getString(R.string.message_fetching));
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(true);
             pDialog.show();
@@ -290,7 +294,7 @@ public class MainActivity extends Activity {
         MarkerOptions markerOptions = new MarkerOptions()
                 .position(latLng)
                 .icon(BitmapDescriptorFactory.defaultMarker(hue))
-                .title(event.getCause() + " [PRIORITY=" + event.getPriority() + "]")
+                .title(event.getCause() + " [" + resources.getString(R.string.label_priority) + "=" + event.getPriority() + "]")
                 .snippet(event.getDescription());
         Marker marker = map.addMarker(markerOptions);
         eventMarkers.add(marker);

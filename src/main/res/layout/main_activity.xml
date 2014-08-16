@@ -22,21 +22,21 @@
                 android:id="@+id/origin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="Origin"
+                android:hint="@string/hint_origin"
                 />
 
         <EditText
                 android:id="@+id/destination"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="Destination"
+                android:hint="@string/hint_destination"
                 />
 
         <Button
                 android:id="@+id/button_search"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Search"
+                android:text="@string/button_search"
                 android:onClick="search"
                 />
 
@@ -44,7 +44,7 @@
                 android:id="@+id/button_toggle_views"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Table"
+                android:text="@string/button_table"
                 android:onClick="toggleViews"
                 android:visibility="gone"
                 />
@@ -53,7 +53,7 @@
                 android:id="@+id/button_toggle_all"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Route Events"
+                android:text="@string/button_events_route"
                 android:onClick="toggleAllEvents"
                 android:visibility="gone"
                 />

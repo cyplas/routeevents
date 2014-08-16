@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Prometne Dogodke</string>
+
+    <string name="message_fetching">Nalaganje dogodkov ...</string>
+
+    <string name="hint_origin">Začetek</string>
+    <string name="hint_destination">Cilj</string>
+
+    <string name="button_events_all">Vse</string>
+    <string name="button_events_route">Na poti</string>
+    <string name="button_map">Zemljevid</string>
+    <string name="button_table">Seznam</string>
+    <string name="button_search">Poišči</string>
+
+    <string name="header_cause">VRSTA</string>
+    <string name="header_priority">PRI</string>
+    <string name="header_description">OPIS</string>
+
+    <string name="label_priority">PRI</string>
+
+</resources>

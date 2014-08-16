@@ -12,7 +12,7 @@
             android:id="@+id/event_header_cause"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TYPE"
+            android:text="@string/header_cause"
             />
 
     <TextView
@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:paddingLeft="10px"
             android:paddingRight="10px"
-            android:text="PRI"
+            android:text="@string/header_priority"
             />
 
     <TextView
@@ -33,7 +33,7 @@
             android:scrollHorizontally="false"
             android:singleLine="false"
             android:layout_weight="1"
-            android:text="DESCRIPTION"
+            android:text="@string/header_description"
             />
 
 </TableRow>
