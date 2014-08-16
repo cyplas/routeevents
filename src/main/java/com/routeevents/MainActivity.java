@@ -99,7 +99,7 @@ public class MainActivity extends Activity {
                 b.include(routeOrigin.getPosition());
                 b.include(routeDestination.getPosition());
                 LatLngBounds bounds = b.build();
-                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds,50);
+                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds,100);
                 map.animateCamera(cu);
                 List<LatLng> latLngs = dir.getDirection(doc);
                 LimitingRectangle rectangle = new LimitingRectangle(latLngs);
