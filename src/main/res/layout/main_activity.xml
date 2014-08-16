@@ -63,12 +63,16 @@
 
     </LinearLayout>
 
-    <TableLayout
-            android:id="@+id/table"
+    <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone">
+            android:layout_height="match_parent">
 
-    </TableLayout>
+        <TableLayout
+                android:id="@+id/table"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
+
+    </ScrollView>
 
 </LinearLayout>
