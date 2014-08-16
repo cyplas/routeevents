@@ -56,6 +56,12 @@ public class MainActivity extends Activity {
     private Marker routeOrigin;
     private Marker routeDestination;
 
+    private EditText originEditText;
+    private EditText destinationEditText;
+    private LinearLayout mapContainer;
+    private TableLayout eventTable;
+    private Button toggleButton;
+
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,8 +69,14 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
 
-        geocoder = new Geocoder(getApplicationContext());
+        originEditText = (EditText) findViewById(R.id.origin);
+        destinationEditText = (EditText) findViewById(R.id.destination);
+        eventTable = (TableLayout) findViewById(R.id.table);
+        mapContainer = (LinearLayout) findViewById(R.id.map_container);
+        toggleButton = (Button) findViewById(R.id.button_toggle);
         map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+
+        geocoder = new Geocoder(getApplicationContext());
         LatLng initialLatLng = getLatLngFromString(COUNTRY_NAME);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLatLng,INITIAL_MAGNIFICATION));
         new JSONParse().execute();
@@ -72,7 +84,6 @@ public class MainActivity extends Activity {
         direction = new GoogleDirection(this);
         direction.setOnDirectionResponseListener(new GoogleDirection.OnDirectionResponseListener() {
             public void onResponse(String status, Document doc, GoogleDirection dir) {
-                TableLayout eventTable = (TableLayout) findViewById(R.id.table);
                 if (routeLine != null) {
                     routeLine.remove();
                     routeOrigin.remove();
@@ -81,7 +92,7 @@ public class MainActivity extends Activity {
                     View headerView = getLayoutInflater().inflate(R.layout.event_header,null);
                     eventTable.addView(headerView);
                 }
-                Button toggleButton = (Button) findViewById(R.id.button_toggle);
+
                 toggleButton.setVisibility(View.VISIBLE);
                 routeLine = map.addPolyline(dir.getPolyline(doc, 3, Color.YELLOW));
                 routeOrigin = map.addMarker(new MarkerOptions().position(origin)
@@ -123,8 +134,8 @@ public class MainActivity extends Activity {
      }
 
     private void updatePlaces() {
-        String originString = ((EditText) findViewById(R.id.origin)).getText().toString() + ", " + COUNTRY_NAME;
-        String destinationString = ((EditText) findViewById(R.id.destination)).getText().toString() + ", " + COUNTRY_NAME;
+        String originString = originEditText.getText().toString() + ", " + COUNTRY_NAME;
+        String destinationString = destinationEditText.getText().toString() + ", " + COUNTRY_NAME;
         origin = getLatLngFromString(originString);
         destination = getLatLngFromString(destinationString);
     }
@@ -152,9 +163,6 @@ public class MainActivity extends Activity {
     }
 
     public void toggleViews(View view) {
-        TableLayout eventTable = (TableLayout) findViewById(R.id.table);
-        LinearLayout mapContainer = (LinearLayout) findViewById(R.id.map_container);
-        Button toggleButton = (Button) findViewById(R.id.button_toggle);
         if (eventTable.getVisibility() == View.VISIBLE) {
             eventTable.setVisibility(View.GONE);
             mapContainer.setVisibility(View.VISIBLE);
@@ -225,8 +233,6 @@ public class MainActivity extends Activity {
                 .snippet(event.getDescription());
         Marker marker = map.addMarker(markerOptions);
         eventMarkers.add(marker);
-
-        TableLayout eventTable = (TableLayout) findViewById(R.id.table);
 
         if (onRoute) {
 
