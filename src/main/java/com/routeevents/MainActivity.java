@@ -78,6 +78,10 @@ public class MainActivity extends Activity {
                     routeLine.remove();
                     routeOrigin.remove();
                     routeDestination.remove();
+                    TableLayout eventTable = (TableLayout) findViewById(R.id.table);
+                    eventTable.removeAllViews();
+                    View headerView = getLayoutInflater().inflate(R.layout.event_header,null);
+                    eventTable.addView(headerView);
                 }
                 routeLine = map.addPolyline(dir.getPolyline(doc, 3, Color.YELLOW));
                 routeOrigin = map.addMarker(new MarkerOptions().position(origin)

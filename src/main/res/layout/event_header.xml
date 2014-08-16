@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<TableRow
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/event_header_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10px"
+        >
+
+    <TextView
+            android:id="@+id/event_header_cause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TYPE"
+            />
+
+    <TextView
+            android:id="@+id/event_header_priority"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10px"
+            android:paddingRight="10px"
+            android:text="PRI"
+            />
+
+    <TextView
+            android:id="@+id/event_header_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="none"
+            android:maxLines="100"
+            android:scrollHorizontally="false"
+            android:singleLine="false"
+            android:layout_weight="1"
+            android:text="DESCRIPTION"
+            />
+
+</TableRow>

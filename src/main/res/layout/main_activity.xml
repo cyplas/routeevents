@@ -61,37 +61,6 @@
             android:layout_height="match_parent"
             android:visibility="gone">
 
-        <TableRow
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/event_header"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="10px"
-                >
-
-            <TextView
-                    android:id="@+id/event_header_cause"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TYPE"
-                    />
-
-            <TextView
-                    android:id="@+id/event_header_priority"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="PRI"
-                    />
-
-            <TextView
-                    android:id="@+id/event_header_description"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="DESCRIPTION"
-                    />
-
-        </TableRow>
-
     </TableLayout>
 
 </LinearLayout>
