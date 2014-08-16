@@ -11,6 +11,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TextView;
 import app.akexorcist.gdaplibrary.GoogleDirection;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -199,6 +202,28 @@ public class MainActivity extends Activity {
                 .snippet(event.getDescription());
         Marker marker = map.addMarker(markerOptions);
         eventMarkers.add(marker);
+
+        LinearLayout mapContainer = (LinearLayout) findViewById(R.id.map_container);
+        TableLayout eventTable = (TableLayout) findViewById(R.id.table);
+
+        mapContainer.setVisibility(View.GONE);
+        eventTable.setVisibility(View.VISIBLE);
+        if (onRoute) {
+
+            View rowView = getLayoutInflater().inflate(R.layout.event_row,null);
+
+            TextView causeView = (TextView) rowView.findViewById(R.id.event_cause);
+            causeView.setText(event.getCause());
+
+            TextView priorityView = (TextView) rowView.findViewById(R.id.event_priority);
+            priorityView.setText(String.valueOf(event.getPriority()));
+
+            TextView descriptionView = (TextView) rowView.findViewById(R.id.event_description);
+            descriptionView.setText(event.getDescription());
+
+            eventTable.addView(rowView);
+
+        }
     }
 
     public static class LimitingRectangle {
