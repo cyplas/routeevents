@@ -74,11 +74,11 @@ public class MainActivity extends Activity {
         direction = new GoogleDirection(this);
         direction.setOnDirectionResponseListener(new GoogleDirection.OnDirectionResponseListener() {
             public void onResponse(String status, Document doc, GoogleDirection dir) {
+                TableLayout eventTable = (TableLayout) findViewById(R.id.table);
                 if (routeLine != null) {
                     routeLine.remove();
                     routeOrigin.remove();
                     routeDestination.remove();
-                    TableLayout eventTable = (TableLayout) findViewById(R.id.table);
                     eventTable.removeAllViews();
                     View headerView = getLayoutInflater().inflate(R.layout.event_header,null);
                     eventTable.addView(headerView);
@@ -147,6 +147,18 @@ public class MainActivity extends Activity {
         }
     }
 
+    public void toggleViews(View view) {
+        TableLayout eventTable = (TableLayout) findViewById(R.id.table);
+        LinearLayout mapContainer = (LinearLayout) findViewById(R.id.map_container);
+        if (eventTable.getVisibility() == View.VISIBLE) {
+            eventTable.setVisibility(View.GONE);
+            mapContainer.setVisibility(View.VISIBLE);
+        } else {
+            eventTable.setVisibility(View.VISIBLE);
+            mapContainer.setVisibility(View.GONE);
+        }
+    }
+
     public void onPause() {
         super.onPause();
     }
@@ -207,11 +219,8 @@ public class MainActivity extends Activity {
         Marker marker = map.addMarker(markerOptions);
         eventMarkers.add(marker);
 
-        LinearLayout mapContainer = (LinearLayout) findViewById(R.id.map_container);
         TableLayout eventTable = (TableLayout) findViewById(R.id.table);
 
-        mapContainer.setVisibility(View.GONE);
-        eventTable.setVisibility(View.VISIBLE);
         if (onRoute) {
 
             View rowView = getLayoutInflater().inflate(R.layout.event_row,null);

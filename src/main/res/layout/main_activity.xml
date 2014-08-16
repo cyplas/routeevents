@@ -33,11 +33,19 @@
                 />
 
         <Button
-                android:id="@+id/button"
+                android:id="@+id/button_search"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Search"
                 android:onClick="search"
+                />
+
+        <Button
+                android:id="@+id/button_toggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Toggle"
+                android:onClick="toggleViews"
                 />
 
     </LinearLayout>
