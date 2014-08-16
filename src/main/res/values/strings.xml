@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Prometne Dogodke</string>
+    <string name="app_name">Prometni Dogodki</string>
 
     <string name="message_fetching">Nalaganje dogodkov ...</string>
     <string name="message_json_null">Zaradi napake pri nalaganju, aplikacija ne more prikazati prometnih dogodkov.</string>
-    <string name="message_invalid_threshold">Mejna razdalja mora biti številka z vrednosjo manjšo kot 0.1.</string>
     <string name="message_unrecognised_location">Google ni našel kraja v Sloveniji na podlagi vnosa:</string>
     <string name="message_empty_location">Prosim vpiši naslov ali kraj.</string>
 
@@ -14,7 +13,7 @@
 
     <string name="button_search">Poišči</string>
 
-    <string name="menuitem_events_all">Vse</string>
+    <string name="menuitem_events_all">Vsi</string>
     <string name="menuitem_events_route">Na poti</string>
     <string name="menuitem_view_map">Zemljevid</string>
     <string name="menuitem_view_table">Seznam</string>
@@ -26,7 +25,7 @@
 
     <string name="label_priority">PRI</string>
 
-    <string name="pref_threshold_title">Meja razdalja</string>
+    <string name="pref_threshold_title">Mejna razdalja</string>
     <string name="pref_threshold_summary">Razdalja (v stopinjah) dogodka do poti, da bi dogodek veljal kot na poti.</string>
 
 </resources>
