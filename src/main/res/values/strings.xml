@@ -5,6 +5,7 @@
 
     <string name="message_fetching">Nalaganje dogodkov ...</string>
     <string name="message_json_null">Zaradi napake pri nalaganju, aplikacija ne more prikazati prometnih dogodkov.</string>
+    <string name="message_invalid_threshold">Mejna razdalja mora biti številka z vrednosjo manjšo kot 0.1.</string>
 
     <string name="hint_origin">Začetek</string>
     <string name="hint_destination">Cilj</string>
@@ -15,11 +16,15 @@
     <string name="menuitem_events_route">Na poti</string>
     <string name="menuitem_view_map">Zemljevid</string>
     <string name="menuitem_view_table">Seznam</string>
+    <string name="menuitem_settings">Nastavitve</string>
 
     <string name="header_cause">VRSTA</string>
     <string name="header_priority">PRI</string>
     <string name="header_description">OPIS</string>
 
     <string name="label_priority">PRI</string>
+
+    <string name="pref_threshold_title">Meja razdalja</string>
+    <string name="pref_threshold_summary">Razdalja (v stopinjah) dogodka do poti, da bi dogodek veljal kot na poti.</string>
 
 </resources>

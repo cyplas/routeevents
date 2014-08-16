@@ -3,6 +3,7 @@ package com.routeevents;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.location.Address;
@@ -127,6 +128,9 @@ public class MainActivity extends Activity {
                 return true;
             case R.id.menu_toggle_events:
                 toggleEvents();
+                return true;
+            case R.id.menu_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             default:
                 return false;
