@@ -263,18 +263,25 @@ public class MainActivity extends Activity {
         @Override
         protected void onPostExecute(JSONObject json) {
             pDialog.dismiss();
-            try {
-                JSONObject jsonEvents = json.getJSONObject(JSON_KEY_EVENTS);
-                JSONArray jsonEventArray = jsonEvents.getJSONArray(JSON_KEY_EVENT_ARRAY);
-                eventMap = new HashMap<TrafficEvent,Boolean>();
-                for (int i=0; i < jsonEventArray.length(); i++) {
-                    JSONObject jsonEvent = jsonEventArray.getJSONObject(i);
-                    TrafficEvent event = parseJSONToTrafficEvent(jsonEvent);
-                    eventMap.put(event, false);
-                    showEvent(event,false);
+            if (json == null) {
+                pDialog = new ProgressDialog(MainActivity.this);
+                pDialog.setMessage(resources.getString(R.string.message_json_null));
+                pDialog.setIndeterminate(false);
+                pDialog.setCancelable(true);
+                pDialog.show();
+            } else {
+                try {
+                    JSONObject jsonEvents = json.getJSONObject(JSON_KEY_EVENTS);
+                    JSONArray jsonEventArray = jsonEvents.getJSONArray(JSON_KEY_EVENT_ARRAY);
+                    for (int i = 0; i < jsonEventArray.length(); i++) {
+                        JSONObject jsonEvent = jsonEventArray.getJSONObject(i);
+                        TrafficEvent event = parseJSONToTrafficEvent(jsonEvent);
+                        eventMap.put(event, false);
+                        showEvent(event, false);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
         }
     }

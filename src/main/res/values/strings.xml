@@ -4,6 +4,7 @@
     <string name="app_name">Prometne Dogodke</string>
 
     <string name="message_fetching">Nalaganje dogodkov ...</string>
+    <string name="message_json_null">Zaradi napake pri nalaganju, aplikacija ne more prikazati prometnih dogodkov.</string>
 
     <string name="hint_origin">Začetek</string>
     <string name="hint_destination">Cilj</string>
