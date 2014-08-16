@@ -102,8 +102,6 @@ public class MainActivity extends Activity {
                 map.animateCamera(cu);
                 List<LatLng> latLngs = dir.getDirection(doc);
                 LimitingRectangle rectangle = new LimitingRectangle(latLngs);
-                System.out.println("Route Events: direction marker count=" + latLngs.size() + "/" + "events=" + events.size());
-                int count = 0;
                 for (TrafficEvent event : events) {
                     boolean onRoute = false;
                     if (rectangle.containsEvent(event)) {
@@ -111,7 +109,6 @@ public class MainActivity extends Activity {
                         for (int i = 0; i < latLngs.size() - 1; i++) {
                             LatLng v = latLngs.get(i);
                             LatLng w = latLngs.get(i + 1);
-                            count++;
                             double distance = distanceCalculator.calculateDistanceFromPointToSegment(v, w, p);
                             if (distance < DISTANCE_THRESHOLD) {
                                 onRoute = true;
