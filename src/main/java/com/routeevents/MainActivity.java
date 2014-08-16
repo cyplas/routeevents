@@ -91,6 +91,7 @@ public class MainActivity extends Activity {
                 System.out.println("Route Events: direction marker count=" + latLngs.size() + "/" + "events=" + events.size());
                 int count = 0;
                 for (TrafficEvent event : events) {
+                    boolean onRoute = false;
                     if (rectangle.containsEvent(event)) {
                         LatLng p = new LatLng(event.getLatitude(), event.getLongitude());
                         for (int i = 0; i < latLngs.size() - 1; i++) {
@@ -99,11 +100,12 @@ public class MainActivity extends Activity {
                             count++;
                             double distance = distanceCalculator.calculateDistanceFromPointToSegment(v, w, p);
                             if (distance < DISTANCE_THRESHOLD) {
-                                showEvent(event);
+                                onRoute = true;
                                 break;
                             }
                         }
                     }
+                    showEvent(event,onRoute);
                 }
             }
         });
@@ -170,7 +172,7 @@ public class MainActivity extends Activity {
                     JSONObject jsonEvent = jsonEventArray.getJSONObject(i);
                     TrafficEvent event = parseJSONToTrafficEvent(jsonEvent);
                     events.add(event);
-                    showEvent(event);
+                    showEvent(event,false);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -187,11 +189,12 @@ public class MainActivity extends Activity {
         return new TrafficEvent(latitude,longitude,cause,priority,description);
     }
 
-    private void showEvent(TrafficEvent event) {
+    private void showEvent(TrafficEvent event, boolean onRoute) {
+        float hue = onRoute ? BitmapDescriptorFactory.HUE_RED : BitmapDescriptorFactory.HUE_VIOLET;
         LatLng latLng = new LatLng(event.getLatitude(),event.getLongitude());
         MarkerOptions markerOptions = new MarkerOptions()
                 .position(latLng)
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                .icon(BitmapDescriptorFactory.defaultMarker(hue))
                 .title(event.getCause() + " [PRIORITY=" + event.getPriority() + "]")
                 .snippet(event.getDescription());
         Marker marker = map.addMarker(markerOptions);
