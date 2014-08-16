@@ -31,6 +31,8 @@ public class MainActivity extends Activity {
 
     private static final String COUNTRY_NAME = "Slovenia";
     private static final float INITIAL_MAGNIFICATION = 8.0f;
+    private static final LatLng INITIAL_NORTH_EAST_CORNER = new LatLng(46.8, 16.5);
+    private static final LatLng INITIAL_SOUTH_WEST_CORNER = new LatLng(45.5, 13.5);
 
     private static final String JSON_SOURCE_URL = "http://opendata.si/promet/events/";
     private static final String JSON_KEY_LATITUDE = "y_wgs";
@@ -79,6 +81,13 @@ public class MainActivity extends Activity {
         geocoder = new Geocoder(getApplicationContext());
         LatLng initialLatLng = getLatLngFromString(COUNTRY_NAME);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLatLng,INITIAL_MAGNIFICATION));
+        map.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+            @Override
+            public void onMapLoaded() {
+                resetMapBounds(INITIAL_NORTH_EAST_CORNER,INITIAL_SOUTH_WEST_CORNER);
+            }
+        });
+
         new JSONParse().execute();
 
         direction = new GoogleDirection(this);
@@ -120,18 +129,19 @@ public class MainActivity extends Activity {
         routeDestination = map.addMarker(new MarkerOptions().position(destination)
                 .icon(BitmapDescriptorFactory.defaultMarker(
                         BitmapDescriptorFactory.HUE_BLUE)));
-        resetMapBounds(routeOrigin,routeDestination);
+        resetMapBounds(routeOrigin.getPosition(),routeDestination.getPosition());
         }
 
-    private void resetMapBounds(Marker marker1, Marker marker2) {
+    private void resetMapBounds(LatLng latLng1, LatLng latLng2) {
         LatLngBounds.Builder b = new LatLngBounds.Builder();
-        b.include(marker1.getPosition());
-        b.include(marker2.getPosition());
+        b.include(latLng1);
+        b.include(latLng2);
         LatLngBounds bounds = b.build();
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds,100);
         map.animateCamera(cu);
 
     }
+
     private void processEvents(List<LatLng> latLngs) {
         LimitingRectangle rectangle = new LimitingRectangle(latLngs);
         for (TrafficEvent event : events) {
