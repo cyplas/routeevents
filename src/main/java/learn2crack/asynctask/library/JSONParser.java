@@ -17,6 +17,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import android.util.Log;
 
+/** Makes an HTTP POST request to a supplied URL and expects JSON back.
+ * Taken verbatim from
+ * http://www.learn2crack.com/2013/10/android-asynctask-json-parsing-example.html.
+ *
+ */
+
 public class JSONParser {
     static InputStream is = null;
     static JSONObject jObj = null;

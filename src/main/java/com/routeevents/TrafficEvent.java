@@ -3,6 +3,9 @@ package com.routeevents;
 /**
  * Created by cyp on 15.8.2014.
  */
+
+/** Model class for a Traffic Event.
+ * It may or may not be on or near the route. */
 public class TrafficEvent {
 
     final private double latitude;

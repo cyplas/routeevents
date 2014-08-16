@@ -14,6 +14,7 @@ import android.widget.Toast;
  * Created by cyp on 16.8.2014.
  */
 
+/** User preferences activity. */
 public class SettingsActivity extends Activity {
 
     @Override

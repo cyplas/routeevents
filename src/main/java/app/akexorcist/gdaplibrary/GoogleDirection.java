@@ -58,6 +58,10 @@ import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
+/** Google Directions API for Android. Taken verbatim from
+ * https://github.com/akexorcist/Android-GoogleDirectionAndPlaceLibrary/blob/master/Library/src/app/akexorcist/gdaplibrary/GoogleDirection.java.
+ *
+ */
 @SuppressLint("NewApi")
 public class GoogleDirection {
     public final static String MODE_DRIVING = "driving";

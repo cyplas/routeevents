@@ -5,8 +5,13 @@ import com.google.android.gms.maps.model.LatLng;
 /**
  * Created by cyp on 16.8.2014.
  */
+
+/** Class which calculates the distance between a line segment and a point.
+ * Ported to Java based on Grumdrig's reply here:
+ * http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment. */
 public class DistanceCalculator {
 
+    /** Calculate the distance from the point p to the ling segment between v and w. */
     public double calculateDistanceFromPointToSegment(LatLng v, LatLng w, LatLng p) {
         double l = calculateLengthSquared(v, w);
         if (l == 0) {
