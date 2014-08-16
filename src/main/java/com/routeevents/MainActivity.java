@@ -74,7 +74,6 @@ public class MainActivity extends Activity {
     private MenuItem viewMenuItem;
     private MenuItem eventsMenuItem;
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
