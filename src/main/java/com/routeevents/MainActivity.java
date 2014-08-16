@@ -84,54 +84,73 @@ public class MainActivity extends Activity {
         direction = new GoogleDirection(this);
         direction.setOnDirectionResponseListener(new GoogleDirection.OnDirectionResponseListener() {
             public void onResponse(String status, Document doc, GoogleDirection dir) {
-                if (routeLine != null) {
-                    routeLine.remove();
-                    routeOrigin.remove();
-                    routeDestination.remove();
-                    eventTable.removeAllViews();
-                    View headerView = getLayoutInflater().inflate(R.layout.event_header,null);
-                    eventTable.addView(headerView);
-                }
-
-                toggleButton.setVisibility(View.VISIBLE);
-                routeLine = map.addPolyline(dir.getPolyline(doc, 3, Color.YELLOW));
-                routeOrigin = map.addMarker(new MarkerOptions().position(origin)
-                        .icon(BitmapDescriptorFactory.defaultMarker(
-                                BitmapDescriptorFactory.HUE_GREEN)));
-                routeDestination = map.addMarker(new MarkerOptions().position(destination)
-                        .icon(BitmapDescriptorFactory.defaultMarker(
-                                BitmapDescriptorFactory.HUE_BLUE)));
-                for (Marker marker : eventMarkers) {
-                    marker.remove();
-                }
-                eventMarkers.clear();
-                LatLngBounds.Builder b = new LatLngBounds.Builder();
-                b.include(routeOrigin.getPosition());
-                b.include(routeDestination.getPosition());
-                LatLngBounds bounds = b.build();
-                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds,100);
-                map.animateCamera(cu);
-                List<LatLng> latLngs = dir.getDirection(doc);
-                LimitingRectangle rectangle = new LimitingRectangle(latLngs);
-                for (TrafficEvent event : events) {
-                    boolean onRoute = false;
-                    if (rectangle.containsEvent(event)) {
-                        LatLng p = new LatLng(event.getLatitude(), event.getLongitude());
-                        for (int i = 0; i < latLngs.size() - 1; i++) {
-                            LatLng v = latLngs.get(i);
-                            LatLng w = latLngs.get(i + 1);
-                            double distance = distanceCalculator.calculateDistanceFromPointToSegment(v, w, p);
-                            if (distance < DISTANCE_THRESHOLD) {
-                                onRoute = true;
-                                break;
-                            }
-                        }
-                    }
-                    showEvent(event,onRoute);
-                }
+                flushDirections();
+                flushEvents();
+                processDirections(dir.getPolyline(doc,3,Color.YELLOW));
+                processEvents(dir.getDirection(doc));
             }
         });
      }
+
+    private void flushDirections() {
+        if (routeLine == null) {
+            toggleButton.setVisibility(View.VISIBLE);
+        } else {
+            routeLine.remove();
+            routeOrigin.remove();
+            routeDestination.remove();
+            eventTable.removeAllViews();
+            View headerView = getLayoutInflater().inflate(R.layout.event_header,null);
+            eventTable.addView(headerView);
+        }
+    }
+
+    private void flushEvents() {
+        for (Marker marker : eventMarkers) {
+            marker.remove();
+        }
+        eventMarkers.clear();
+    }
+
+    private void processDirections(PolylineOptions polylineOptions) {
+        routeLine = map.addPolyline(polylineOptions);
+        routeOrigin = map.addMarker(new MarkerOptions().position(origin)
+                .icon(BitmapDescriptorFactory.defaultMarker(
+                        BitmapDescriptorFactory.HUE_GREEN)));
+        routeDestination = map.addMarker(new MarkerOptions().position(destination)
+                .icon(BitmapDescriptorFactory.defaultMarker(
+                        BitmapDescriptorFactory.HUE_BLUE)));
+        resetMapBounds(routeOrigin,routeDestination);
+        }
+
+    private void resetMapBounds(Marker marker1, Marker marker2) {
+        LatLngBounds.Builder b = new LatLngBounds.Builder();
+        b.include(marker1.getPosition());
+        b.include(marker2.getPosition());
+        LatLngBounds bounds = b.build();
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds,100);
+        map.animateCamera(cu);
+
+    }
+    private void processEvents(List<LatLng> latLngs) {
+        LimitingRectangle rectangle = new LimitingRectangle(latLngs);
+        for (TrafficEvent event : events) {
+            boolean onRoute = false;
+            if (rectangle.containsEvent(event)) {
+                LatLng p = new LatLng(event.getLatitude(), event.getLongitude());
+                for (int i = 0; i < latLngs.size() - 1; i++) {
+                    LatLng v = latLngs.get(i);
+                    LatLng w = latLngs.get(i + 1);
+                    double distance = distanceCalculator.calculateDistanceFromPointToSegment(v, w, p);
+                    if (distance < DISTANCE_THRESHOLD) {
+                        onRoute = true;
+                        break;
+                    }
+                }
+            }
+            showEvent(event,onRoute);
+        }
+    }
 
     private void updatePlaces() {
         String originString = originEditText.getText().toString() + ", " + COUNTRY_NAME;
