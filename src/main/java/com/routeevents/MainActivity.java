@@ -1,16 +1,16 @@
 package com.routeevents;
  
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -48,7 +48,6 @@ public class MainActivity extends Activity {
     private static final String JSON_KEY_DESCRIPTION = "opis";
     private static final String JSON_KEY_EVENTS = "dogodki";
     private static final String JSON_KEY_EVENT_ARRAY = "dogodek";
-    public static final double DISTANCE_THRESHOLD = 0.02;
 
     private Resources resources;
 
@@ -198,8 +197,13 @@ public class MainActivity extends Activity {
 
     }
 
+    public float getDistanceThreshold() {
+        return Float.parseFloat(PreferenceManager.getDefaultSharedPreferences(this).getString("pref_threshold",""));
+    }
+
     private void processEvents(List<LatLng> latLngs) {
-        LimitingRectangle rectangle = new LimitingRectangle(latLngs);
+        float distanceThreshold = getDistanceThreshold();
+        LimitingRectangle rectangle = new LimitingRectangle(latLngs,distanceThreshold);
         for (TrafficEvent event : eventMap.keySet()) {
             boolean onRoute = false;
             if (rectangle.containsEvent(event)) {
@@ -208,7 +212,7 @@ public class MainActivity extends Activity {
                     LatLng v = latLngs.get(i);
                     LatLng w = latLngs.get(i + 1);
                     double distance = distanceCalculator.calculateDistanceFromPointToSegment(v, w, p);
-                    if (distance < DISTANCE_THRESHOLD) {
+                    if (distance < distanceThreshold) {
                         onRoute = true;
                         break;
                     }
@@ -357,7 +361,7 @@ public class MainActivity extends Activity {
         public Double minLng;
         public Double maxLng;
 
-        public LimitingRectangle(List<LatLng> latLngs) {
+        public LimitingRectangle(List<LatLng> latLngs, float distanceThreshold) {
             minLat = maxLat = minLng = maxLng = null;
             for (LatLng latLng : latLngs) {
                 double lat = latLng.latitude;
@@ -372,10 +376,10 @@ public class MainActivity extends Activity {
                     maxLng = lng > maxLng ? lng : maxLng;
                 }
             }
-            minLat -= DISTANCE_THRESHOLD;
-            maxLat += DISTANCE_THRESHOLD;
-            minLng -= DISTANCE_THRESHOLD;
-            maxLng += DISTANCE_THRESHOLD;
+            minLat -= distanceThreshold;
+            maxLat += distanceThreshold;
+            minLng -= distanceThreshold;
+            maxLng += distanceThreshold;
         }
 
         public boolean containsEvent(TrafficEvent event) {
