@@ -6,6 +6,8 @@
     <string name="message_fetching">Nalaganje dogodkov ...</string>
     <string name="message_json_null">Zaradi napake pri nalaganju, aplikacija ne more prikazati prometnih dogodkov.</string>
     <string name="message_invalid_threshold">Mejna razdalja mora biti številka z vrednosjo manjšo kot 0.1.</string>
+    <string name="message_unrecognised_location">Google ni našel kraja v Sloveniji na podlagi vnosa:</string>
+    <string name="message_empty_location">Prosim vpiši naslov ali kraj.</string>
 
     <string name="hint_origin">Začetek</string>
     <string name="hint_destination">Cilj</string>

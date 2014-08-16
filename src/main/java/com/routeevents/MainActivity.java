@@ -10,7 +10,9 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceManager;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -49,6 +51,8 @@ public class MainActivity extends Activity {
     private static final String JSON_KEY_EVENTS = "dogodki";
     private static final String JSON_KEY_EVENT_ARRAY = "dogodek";
 
+    private String addressSuffix;
+
     private Resources resources;
 
     private Geocoder geocoder;
@@ -81,6 +85,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.main_activity);
         resources = getResources();
 
+        addressSuffix = ", " + COUNTRY_NAME;
         originEditText = (EditText) findViewById(R.id.origin);
         destinationEditText = (EditText) findViewById(R.id.destination);
         eventTable = (TableLayout) findViewById(R.id.table);
@@ -223,8 +228,8 @@ public class MainActivity extends Activity {
     }
 
     private void updatePlaces() {
-        String originString = originEditText.getText().toString() + ", " + COUNTRY_NAME;
-        String destinationString = destinationEditText.getText().toString() + ", " + COUNTRY_NAME;
+        String originString = originEditText.getText().toString() + addressSuffix;
+        String destinationString = destinationEditText.getText().toString() + addressSuffix;
         updatePlaces(originString,destinationString);
     }
 
@@ -234,16 +239,23 @@ public class MainActivity extends Activity {
     }
 
     private LatLng getLatLngFromString(String string) {
-        try {
-            List<Address> addresses = geocoder.getFromLocationName(string, 1);
-            if (!addresses.isEmpty()) {
-                Address address = addresses.get(0);
-                return new LatLng(address.getLatitude(), address.getLongitude());
+        String warning = null;
+        if (string.equals(addressSuffix)) {
+            warning = resources.getString(R.string.message_empty_location);
+        } else {
+            try {
+                List<Address> addresses = geocoder.getFromLocationName(string, 1);
+                if (!addresses.isEmpty()) {
+                    Address address = addresses.get(0);
+                    return new LatLng(address.getLatitude(), address.getLongitude());
+                }
+            } catch (IOException e) {
             }
+            warning = resources.getString(R.string.message_unrecognised_location) + " " + string;
         }
-        catch (IOException e) {
-        }
-        System.out.println("Route Events: couldn't find LatLng for string=" + string);
+        Toast toast = Toast.makeText(getApplicationContext(), warning, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+        toast.show();
         return null;
     }
 
