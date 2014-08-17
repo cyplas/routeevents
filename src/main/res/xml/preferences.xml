@@ -10,4 +10,11 @@
                 android:defaultValue="0.02"
                 />
 
+    <CheckBoxPreference
+            android:key="pref_auto_refetch"
+            android:title="@string/pref_auto_refetch_title"
+            android:summary="@string/pref_auto_refetch_summary"
+            android:defaultValue="false"
+            />
+
 </PreferenceScreen>

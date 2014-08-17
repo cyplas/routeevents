@@ -118,7 +118,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        new ParseEvents().execute();
+        reparseAndRedrawEvents();
 
         direction = new GoogleDirection(this);
         direction.setOnDirectionResponseListener(new GoogleDirection.OnDirectionResponseListener() {
@@ -126,11 +126,24 @@ public class MainActivity extends Activity {
                 flushDirections();
                 showDirections(dir.getPolyline(doc, 3, Color.YELLOW));
                 route = dir.getDirection(doc);
-                flushEvents();
-                new ParseEvents().execute();
+                if (getAutoRefetch()) {
+                    reparseAndRedrawEvents();
+                } else {
+                    redrawEvents();
+                }
             }
         });
      }
+
+    private void reparseAndRedrawEvents() {
+        new ParseAndRedrawEvents().execute();
+    }
+
+    private void redrawEvents() {
+        flushEvents();
+        identifyRouteEvents();
+        showEvents();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -148,6 +161,9 @@ public class MainActivity extends Activity {
                 return true;
             case R.id.menu_toggle_events:
                 toggleEvents();
+                return true;
+            case R.id.menu_refetch:
+                reparseAndRedrawEvents();
                 return true;
             case R.id.menu_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
@@ -232,6 +248,11 @@ public class MainActivity extends Activity {
         return Float.parseFloat(PreferenceManager.getDefaultSharedPreferences(this).getString("pref_threshold", ""));
     }
 
+    public boolean getAutoRefetch() {
+        return PreferenceManager.getDefaultSharedPreferences(this).getBoolean("pref_auto_refetch", false);
+    }
+
+
     /** Update the eventMap according to the new route and the distanceThreshold. */
     private void identifyRouteEvents() {
         if (!route.isEmpty()) {
@@ -315,8 +336,13 @@ public class MainActivity extends Activity {
         super.onPause();
     }
 
+    public void onResume() {
+        super.onResume();
+
+    }
+
     /** AsyncTask in charge of parsing the TrafficEvents from JSON. */
-    private class ParseEvents extends AsyncTask<String, String, JSONObject> {
+    private class ParseAndRedrawEvents extends AsyncTask<String, String, JSONObject> {
 
         private ProgressDialog pDialog;
 
@@ -358,8 +384,7 @@ public class MainActivity extends Activity {
                         TrafficEvent event = parseJSONToTrafficEvent(jsonEvent);
                         eventMap.put(event, false);
                     }
-                    identifyRouteEvents();
-                    showEvents();
+                    redrawEvents();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

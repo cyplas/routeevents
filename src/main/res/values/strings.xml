@@ -17,6 +17,7 @@
     <string name="menuitem_events_route">Na poti</string>
     <string name="menuitem_view_map">Zemljevid</string>
     <string name="menuitem_view_table">Seznam</string>
+    <string name="menuitem_refetch">Posodobi</string>
     <string name="menuitem_settings">Nastavitve</string>
 
     <string name="header_cause">VRSTA</string>
@@ -27,5 +28,7 @@
 
     <string name="pref_threshold_title">Mejna razdalja</string>
     <string name="pref_threshold_summary">Razdalja (v stopinjah) dogodka do poti, da bi dogodek veljal kot na poti.</string>
+    <string name="pref_auto_refetch_title">Avtomatska posodobitev</string>
+    <string name="pref_auto_refetch_summary">Avtomatsko posodobi prometne dogodke pri vsakem novem iskanju.</string>
 
 </resources>
