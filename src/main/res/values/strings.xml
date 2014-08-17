@@ -3,7 +3,7 @@
 
     <string name="app_name">Prometni Dogodki</string>
 
-    <string name="message_fetching">Nalaganje dogodkov ...</string>
+    <string name="message_fetching">Nalaganje prometnih dogodkov ...</string>
     <string name="message_json_null">Zaradi napake pri nalaganju, aplikacija ne more prikazati prometnih dogodkov.</string>
     <string name="message_unrecognised_location">Google ni našel kraja v Sloveniji na podlagi vnosa:</string>
     <string name="message_empty_location">Prosim vpiši naslov ali kraj.</string>

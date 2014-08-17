@@ -76,6 +76,9 @@ public class MainActivity extends Activity {
     // Flag of whether to show all events on the map or just the ones on the route.
     private boolean showAllEvents = true;
 
+    // List of route positions
+    private ArrayList<LatLng> route = new ArrayList<LatLng>();
+
     // Route decorations
     private Polyline routeLine;
     private Marker routeOrigin;
@@ -121,10 +124,10 @@ public class MainActivity extends Activity {
         direction.setOnDirectionResponseListener(new GoogleDirection.OnDirectionResponseListener() {
             public void onResponse(String status, Document doc, GoogleDirection dir) {
                 flushDirections();
+                showDirections(dir.getPolyline(doc, 3, Color.YELLOW));
+                route = dir.getDirection(doc);
                 flushEvents();
-                processDirections(dir.getPolyline(doc,3,Color.YELLOW));
-                processEvents(dir.getDirection(doc));
-                showEvents();
+                new ParseEvents().execute();
             }
         });
      }
@@ -183,8 +186,6 @@ public class MainActivity extends Activity {
                 showEvent(entry.getKey(),entry.getValue());
             }
         }
-        viewMenuItem.setVisible(true);
-        eventsMenuItem.setVisible(true);
     }
 
     /** Toggle between showing all events or just the route ones on the map. */
@@ -200,7 +201,7 @@ public class MainActivity extends Activity {
     }
 
     /** Draw the new route and reset camera. */
-    private void processDirections(PolylineOptions polylineOptions) {
+    private void showDirections(PolylineOptions polylineOptions) {
         routeLine = map.addPolyline(polylineOptions);
         routeOrigin = map.addMarker(new MarkerOptions().position(origin)
                 .icon(BitmapDescriptorFactory.defaultMarker(
@@ -209,6 +210,8 @@ public class MainActivity extends Activity {
                 .icon(BitmapDescriptorFactory.defaultMarker(
                         BitmapDescriptorFactory.HUE_BLUE)));
         resetMapBounds(routeOrigin.getPosition(),routeDestination.getPosition());
+        viewMenuItem.setVisible(true);
+        eventsMenuItem.setVisible(true);
         }
 
     /** Reset camera with appropriate centre and zoom to include specified positions. */
@@ -226,32 +229,33 @@ public class MainActivity extends Activity {
      * segments to be on the route.
      */
     public float getDistanceThreshold() {
-        return Float.parseFloat(PreferenceManager.getDefaultSharedPreferences(this).getString("pref_threshold",""));
+        return Float.parseFloat(PreferenceManager.getDefaultSharedPreferences(this).getString("pref_threshold", ""));
     }
 
     /** Update the eventMap according to the new route and the distanceThreshold. */
-    private void processEvents(List<LatLng> latLngs) {
-        float distanceThreshold = getDistanceThreshold();
-        LimitingRectangle rectangle = new LimitingRectangle(latLngs,distanceThreshold);
-        for (TrafficEvent event : eventMap.keySet()) {
-            boolean onRoute = false;
-            // bypass nested for loop if event is clearly not near any segment
-            if (rectangle.containsEvent(event)) {
-                LatLng p = new LatLng(event.getLatitude(), event.getLongitude());
-                for (int i = 0; i < latLngs.size() - 1; i++) {
-                    LatLng v = latLngs.get(i);
-                    LatLng w = latLngs.get(i + 1);
-                    double distance = distanceCalculator.calculateDistanceFromPointToSegment(v, w, p);
-                    if (distance < distanceThreshold) {
-                        onRoute = true;
-                        break;
+    private void identifyRouteEvents() {
+        if (!route.isEmpty()) {
+            float distanceThreshold = getDistanceThreshold();
+            LimitingRectangle rectangle = new LimitingRectangle(route, distanceThreshold);
+            for (TrafficEvent event : eventMap.keySet()) {
+                boolean onRoute = false;
+                // bypass nested for loop if event is clearly not near any segment
+                if (rectangle.containsEvent(event)) {
+                    LatLng p = new LatLng(event.getLatitude(), event.getLongitude());
+                    for (int i = 0; i < route.size() - 1; i++) {
+                        LatLng v = route.get(i);
+                        LatLng w = route.get(i + 1);
+                        double distance = distanceCalculator.calculateDistanceFromPointToSegment(v, w, p);
+                        if (distance < distanceThreshold) {
+                            onRoute = true;
+                            break;
+                        }
                     }
                 }
+                eventMap.put(event, onRoute);
             }
-            eventMap.put(event, onRoute);
         }
     }
-
     /** Update origin and destination positions based on user's input. */
     private void updatePlaces() {
         String originString = originEditText.getText().toString() + addressSuffix;
@@ -335,7 +339,7 @@ public class MainActivity extends Activity {
             return json;
         }
 
-        /** If JSON is obtained successfully, load the eventMap and show all the events. */
+        /** If JSON is obtained successfully, update eventMap and show all the events. */
         @Override
         protected void onPostExecute(JSONObject json) {
             pDialog.dismiss();
@@ -353,8 +357,9 @@ public class MainActivity extends Activity {
                         JSONObject jsonEvent = jsonEventArray.getJSONObject(i);
                         TrafficEvent event = parseJSONToTrafficEvent(jsonEvent);
                         eventMap.put(event, false);
-                        showEvent(event, false);
                     }
+                    identifyRouteEvents();
+                    showEvents();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
